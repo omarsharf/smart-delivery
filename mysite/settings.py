@@ -133,3 +133,6 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# الصفحات المحمية (زي request) بتودي الزائر غير المسجل هنا عشان يسجل دخول
+LOGIN_URL = '/admin/login/'

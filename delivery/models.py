@@ -60,9 +60,18 @@ class Delivery(models.Model):
   driver = models.ForeignKey(Driver, on_delete=models.SET_NULL, null=True, blank=True)
   created_at = models.DateTimeField(auto_now_add=True)
   scheduled_date = models.DateTimeField()
+  VEHICLE_CHOICES = [
+    ('big_van', 'مركلة (كبيرة)'),
+    ('van', 'مركبة'),
+    ('moto', 'موتوسيكل (خفيف)'),
+    ]
+
+  vehicle_type = models.CharField(max_length=20, choices=VEHICLE_CHOICES, null=True, blank=True)
+  notes = models.TextField(null=True, blank=True)
 
   def __str__(self):
       return f'{self.tracking_number} - {self.customer}'
+
 
 
 # 5. جدول سجل الحالات (بيتسجل تلقائيًا من delivery/signals.py)
