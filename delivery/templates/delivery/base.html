@@ -19,13 +19,13 @@
             <span class="brand-badge">Smart Delivery</span>
         </div>
         <nav class="navbar-links">
-            <a href="#">الرئيسية</a>
+            <a href="{% url 'home' %}">الرئيسية</a>
             <a href="{% url 'request_shipment' %}">اطلب شحنة</a>
             <a href="#">تتبع شحنة</a>
             <a href="#">الشات بوت</a>
             <a href="#">دخول التوزيع</a>
             <a href="#">لوحة السائق</a>
-            <a href="/admin/" class="navbar-login">تسجيل الدخول</a>
+            <a href="{% url 'login'%}" class="navbar-login">تسجيل الدخول</a>
         </nav>
     </header>
 

@@ -1,5 +1,7 @@
 from django import forms
 from .models import Delivery
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
 
 
 class DeliveryForm(forms.ModelForm):
@@ -16,9 +18,17 @@ class DeliveryForm(forms.ModelForm):
         }
         widgets = {
             'pickup_address': forms.TextInput(
-                attrs={'placeholder': 'مثال: مول سيتي ستارز، مدينة نصر'}),
+                attrs={'placeholder': 'عنوان الاستلام (من)'}),
             'dropoff_address': forms.TextInput(
-                attrs={'placeholder': 'مثال: فيلا 12، التجمع الخامس'}),
+                attrs={'placeholder':'عنوان التسليم (إلى)'}),
             'scheduled_date': forms.DateTimeInput(
                 attrs={'type': 'datetime-local'}),
         }
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(label='البريد الإلكتروني')
+    name = forms.CharField(label='الاسم بالكامل')
+    phone = forms.CharField(label='رقم الموبايل')
+
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'email', 'name', 'phone']        

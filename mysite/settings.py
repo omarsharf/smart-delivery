@@ -135,4 +135,4 @@ MAILERS = {
 }
 
 # الصفحات المحمية (زي request) بتودي الزائر غير المسجل هنا عشان يسجل دخول
-LOGIN_URL = '/admin/login/'
+LOGIN_URL = '/login/'
