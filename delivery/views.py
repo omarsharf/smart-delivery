@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import login  as asauth_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required 
@@ -43,4 +43,11 @@ def add(request):
     else:
         form = DeliveryForm()
     return render(request, 'delivery/request_shipment.html', {'form': form})
+def track(request):
+    delivery=None
+    number=request.GET.get('number')
+    if number:
+        delivery=get_object_or_404(Delivery,tracking_number=number)
+    return render(request, 'delivery/track.html', {'delivery': delivery})
+
 # Create your views here.
