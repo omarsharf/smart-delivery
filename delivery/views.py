@@ -33,6 +33,8 @@ def register(request):
     return render(request, 'delivery/register.html', {'form': form})
 @login_required
 def add(request):
+    if request.user.role != 'customer':
+        return redirect('home')
     if request.method == 'POST':
         form = DeliveryForm(request.POST)
         if form.is_valid():
