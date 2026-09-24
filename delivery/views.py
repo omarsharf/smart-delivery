@@ -12,21 +12,36 @@ def login(request):
         if form.is_valid():
             user = form.get_user()
             asauth_login(request, user)
-            return redirect('home')   
+            if user.role == 'driver':
+                return redirect('driver_home')
+            return redirect('home')
     else:
         form = AuthenticationForm()
-    return render(request,'delivery/login.html',{'form':form})
+    return render(request, 'delivery/login.html', {'form': form})
+
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            Customer.objects.create(
-                user=user,
-                name=form.cleaned_data['name'],
-                phone=form.cleaned_data['phone'],
-                address='')
+            if form.cleaned_data['role'] == 'driver':
+                user.role = 'driver'
+                user.save()
+                Driver.objects.create(
+                    user=user,
+                    name=form.cleaned_data['name'],
+                    phone=form.cleaned_data['phone'],
+                    vehicle_type=form.cleaned_data['vehicle_type'] or 'van',
+                )
+            else:
+                Customer.objects.create(
+                    user=user,
+                    name=form.cleaned_data['name'],
+                    phone=form.cleaned_data['phone'],
+                    address='')
             asauth_login(request, user)
+            if user.role == 'driver':
+                return redirect('driver_home')
             return redirect('home')
     else:
         form = RegisterForm()

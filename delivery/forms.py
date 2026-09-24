@@ -24,11 +24,24 @@ class DeliveryForm(forms.ModelForm):
             'scheduled_date': forms.DateTimeInput(
                 attrs={'type': 'datetime-local'}),
         }
+
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(label='البريد الإلكتروني')
     name = forms.CharField(label='الاسم بالكامل')
     phone = forms.CharField(label='رقم الموبايل')
+    role = forms.ChoiceField(
+        label='نوع الحساب',
+        choices=[
+            ('customer', 'عميل — عايز أطلب شحنات'),
+            ('driver', 'سائق — عايز أشيل شحنات'),
+        ],
+    )
+    vehicle_type = forms.ChoiceField(
+        label='نوع المركبة (للسائقين فقط)',
+        choices=Delivery.VEHICLE_CHOICES,
+        required=False,
+    )
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'name', 'phone']        
+        fields = ['username', 'email', 'name', 'phone']
