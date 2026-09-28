@@ -1,0 +1,43 @@
+{% comment %}
+  كارت شحنة واحد — بيستخدم جوه customer_dashboard
+  للعرض فقط: العميل بيشوف حالته، تغيير الحالة مش من هنا أبداً.
+{% endcomment %}
+
+<article class="shipment-card">
+  <div class="shipment-card-head">
+    <div class="shipment-track-no">{{ delivery.tracking_number }}</div>
+    <span class="status-badge status-{{ delivery.status|lower }}">{{ delivery.get_status_display }}</span>
+  </div>
+
+  <div class="route-line">
+    <span class="dot"></span>
+    <span>{{ delivery.pickup_address }}</span>
+    <span class="dash"></span>
+    <span>{{ delivery.dropoff_address }}</span>
+    <span class="dot"></span>
+  </div>
+
+  <div class="shipment-meta">
+    <div>
+      <div class="shipment-meta-label">الميعاد</div>
+      <div>{{ delivery.scheduled_date|date:"Y-m-d h:i A" }}</div>
+    </div>
+    <div>
+      <div class="shipment-meta-label">المركبة</div>
+      <div>{{ delivery.get_vehicle_type_display|default:"—" }}</div>
+    </div>
+  </div>
+
+  {% if delivery.driver %}
+    <div class="shipment-meta">
+      <div>
+        <div class="shipment-meta-label">السائق</div>
+        <div>{{ delivery.driver.name }}</div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="btn-row">
+    <a href="{% url 'track' %}?number={{ delivery.tracking_number }}" class="btn btn-secondary btn-sm">شاهد التتبع</a>
+  </div>
+</article>

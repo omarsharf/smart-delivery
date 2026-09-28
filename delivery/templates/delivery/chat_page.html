@@ -1,0 +1,20 @@
+{% extends "delivery/base.html" %}
+{% block name %}الشات بوت — توصيل ذكي{% endblock %}
+{% block content %}
+
+<h3>المساعد الذكي 🤖</h3>
+
+{# السجل القديم — البيانات بتيجي جاهزة من الفانكشن #}
+<div id="chat-messages">
+    {% for m in history %}
+        {{ m.content }}<br>
+    {% endfor %}
+</div>
+
+{# نفس الـ IDs دي ضرورية — الجافاسكريبت بتاع الشات بيكلمهم بالاسم #}
+<div id="chat-input-row">
+    <input id="chat-input" type="text" placeholder="اكتب رسالتك...">
+    <button onclick="sendMessage()">إرسال</button>
+</div>
+
+{% endblock %}

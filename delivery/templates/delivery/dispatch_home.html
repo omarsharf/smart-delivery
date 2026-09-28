@@ -1,0 +1,30 @@
+{% extends "delivery/base.html" %}
+{% block name %}لوحة التوزيع — توصيل ذكي{% endblock %}
+{% block content %}
+<h3>لوحة التوزيع 🎯</h3>
+<p>أهلاً {{ request.user.username }} — دي الشحنات المعلّقة المستنية إسناد ({{ pending|length }})</p>
+
+{% if pending %}
+  {% for d in pending %}
+    <div class="dispatch-card">
+      <h4>شحنة {{ d.tracking_number|slice:":8" }} — {{ d.get_status_display }}</h4>
+      <p>العميل: {{ d.customer.name }} — 📞 {{ d.customer.phone }}</p>
+      <p>من: {{ d.pickup_address }} ← إلى: {{ d.dropoff_address }}</p>
+      <p>الميعاد: {{ d.scheduled_date|date:"Y-m-d h:i A" }} | المركبة: {{ d.get_vehicle_type_display|default:"—" }}</p>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="delivery_id" value="{{ d.id }}">
+        <select name="driver_id">
+          {% for dr in drivers %}
+            <option value="{{ dr.id }}">{{ dr.name }} — {{ dr.vehicle_type }}</option>
+          {% endfor %}
+        </select>
+        <button>🎯 أسند الشحنة</button>
+      </form>
+    </div>
+    <br>
+  {% endfor %}
+{% else %}
+  <p>مفيش شحنات معلّقة — كل حاجة متوزعة ✅</p>
+{% endif %}
+{% endblock %}

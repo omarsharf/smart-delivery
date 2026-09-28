@@ -22,8 +22,9 @@
             <a href="{% url 'home' %}">الرئيسية</a>
             <a href="{% url 'request_shipment' %}">اطلب شحنة</a>
             <a href="{%url 'track'%}">تتبع شحنة</a>
-            <a href="#">الشات بوت</a>
-            <a href="#">دخول التوزيع</a>
+            <a href="{% url 'customer_dashboard' %}">شحناتي</a>
+            <a href="{% url 'chat_page' %}">الشات بوت</a>
+            <a href="{% url 'dispatch_home' %}">دخول التوزيع</a>
             <a href="{%url 'driver_home'%}">لوحة السائق</a>
             <a href="{% url 'login'%}" class="navbar-login">تسجيل الدخول</a>
         </nav>
@@ -44,7 +45,24 @@
         </div>
     </footer>
 
+    {% if request.user.is_authenticated %}
+    <!-- Chat bubble widget -->
+    <div id="chat-bubble" onclick="toggleChat()">💬</div>
+    <div id="chat-window" class="hidden" style="display:none">
+        <div id="chat-header">
+            <span>مساعد التوصيل الذكي 🤖</span>
+            <button id="chat-close" onclick="toggleChat()">✕</button>
+        </div>
+        <div id="chat-messages"></div>
+        <div id="chat-input-row">
+            <input id="chat-input" type="text" placeholder="اكتب رسالتك... أو ابعت رقم شحنة">
+            <button onclick="sendMessage()">إرسال</button>
+        </div>
+    </div>
+    {% endif %}
+
     {% block js %} {% endblock %}
+    <script src="{% static 'js/chatbot.js' %}"></script>
 </body>
 
 </html>

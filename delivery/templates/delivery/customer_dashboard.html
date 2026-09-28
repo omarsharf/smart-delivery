@@ -1,0 +1,54 @@
+{% extends "delivery/base.html" %}
+{% block name %}شحناتي — توصيل ذكي{% endblock %}
+{% block content %}
+<section>
+  <div class="container">
+    <div class="dashboard-head">
+      <div>
+        <h1 class="mt-0">شحناتي 📦</h1>
+      </div>
+      <a href="{% url 'request_shipment' %}" class="btn btn-primary">➕ اطلب شحنة جديدة</a>
+    </div>
+    <p class="dashboard-sub">كل اللي بعتّه عبر توصيل ذكي، في مكان واحد وبحالة لحظية.</p>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">{{ total_count }}</div>
+        <div class="stat-label">إجمالي الشحنات</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ active_count }}</div>
+        <div class="stat-label">قيد التنفيذ</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ delivered_count }}</div>
+        <div class="stat-label">تم تسليمها</div>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <a href="{% url 'customer_dashboard' %}" class="filter-chip {% if not status_filter %}is-active{% endif %}">الكل</a>
+      <a href="{% url 'customer_dashboard' %}?status=PENDING" class="filter-chip {% if status_filter == 'PENDING' %}is-active{% endif %}">معلّقة</a>
+      <a href="{% url 'customer_dashboard' %}?status=ASSIGNED" class="filter-chip {% if status_filter == 'ASSIGNED' %}is-active{% endif %}">مُسندة</a>
+      <a href="{% url 'customer_dashboard' %}?status=IN_TRANSIT" class="filter-chip {% if status_filter == 'IN_TRANSIT' %}is-active{% endif %}">في الطريق</a>
+      <a href="{% url 'customer_dashboard' %}?status=DELAYED" class="filter-chip {% if status_filter == 'DELAYED' %}is-active{% endif %}">متأخرة</a>
+      <a href="{% url 'customer_dashboard' %}?status=DELIVERED" class="filter-chip {% if status_filter == 'DELIVERED' %}is-active{% endif %}">تم التسليم</a>
+      <a href="{% url 'customer_dashboard' %}?status=CANCELLED" class="filter-chip {% if status_filter == 'CANCELLED' %}is-active{% endif %}">ملغاة</a>
+    </div>
+
+    {% if deliveries %}
+      <div class="shipment-grid">
+        {% for delivery in deliveries %}
+          {% include "delivery/customer_shipment_card.html" with delivery=delivery %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <h3>لسه مفيش شحنات</h3>
+        <p>أول شحنة هتبعتها هتظهر هنا بحالتها اللحظية.</p>
+        <a href="{% url 'request_shipment' %}" class="btn btn-primary" style="margin-top:12px;">ابعت أول شحنة</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
