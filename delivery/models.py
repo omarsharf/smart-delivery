@@ -61,7 +61,7 @@ class Delivery(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   scheduled_date = models.DateTimeField()
   VEHICLE_CHOICES = [
-    ('big_van', 'مركلة (كبيرة)'),
+    ('big_van', 'مركبه (كبيرة)'),
     ('van', 'مركبة'),
     ('moto', 'موتوسيكل (خفيف)'),
     ]

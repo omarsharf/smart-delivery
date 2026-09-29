@@ -6,6 +6,9 @@ from django.http import JsonResponse
 from .models import Delivery, Customer, Driver,StatusHistory, ChatMessage
 from .forms import DeliveryForm, RegisterForm
 from django.contrib.auth import logout
+from django.views.decorators.http import require_POST
+from delivery.ai_agent import run_agent
+import logging
 
 def index(request):
     return render(request,'delivery/home.html')
@@ -102,7 +105,13 @@ def driver_home(request):
     return render(request, 'delivery/driver_home.html', {'deliveries': deliveries})
 
 
+
+
+logger = logging.getLogger(__name__)
+
+
 def make_reply(message, user):
+    """الوضع المحلي: ردود ذكية من قاعدة البيانات بدون AI خارجي (لما مفيش مفتاح في .env)."""
     message = message.strip()
     # لو فيه رقم شحنة كامل في الرسالة → نرد بحالتها الحقيقية من الداتابيز
     for word in message.split():
@@ -121,20 +130,66 @@ def make_reply(message, user):
 
 
 @login_required
+@require_POST
 def chat_api(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'POST only'}, status=405)
-    user_message = request.POST.get('message', '').strip()
+    user_message = request.POST.get("message", "").strip()
+
     if not user_message:
-        return JsonResponse({'reply': 'اكتب حاجة الأول 😄'})
-    reply = make_reply(user_message, request.user)
-    ChatMessage.objects.create(user=request.user, role='user', content=user_message)
-    ChatMessage.objects.create(user=request.user, role='assistant', content=reply)
-    return JsonResponse({'reply': reply})
+        return JsonResponse({"reply": "اكتب رسالتك الأول."}, status=400)
+
+    saved = ChatMessage.objects.create(
+        user=request.user,
+        role="user",
+        content=user_message
+    )
+
+    history = list(
+        ChatMessage.objects.filter(
+            user=request.user,
+            role__in=["user", "assistant"]
+        ).order_by("-created_at", "-id")[:10]
+    )
+
+    messages = []
+    for item in reversed(history):
+        if messages and messages[-1]["role"] == item.role:
+            messages[-1]["content"] += "\n" + item.content
+        else:
+            messages.append({"role": item.role, "content": item.content})
+
+    while messages and messages[0]["role"] != "user":
+        messages.pop(0)
+
+    try:
+        reply = run_agent(request.user, messages)
+    except Exception:
+        logger.exception("AI agent error")
+        reply = None
+
+    # لو مفيش مفتاح AI (run_agent رجع None) أو حصل خطأ → الوضع المحلي
+    if not reply:
+        reply = make_reply(user_message, request.user)
+
+    ChatMessage.objects.create(
+        user=request.user,
+        role="assistant",
+        content=reply
+    )
+
+    return JsonResponse({"reply": reply})
+
+
 @login_required
 def chat_page(request):
-    history = ChatMessage.objects.filter(user=request.user).order_by('created_at')
-    return render(request, 'delivery/chat_page.html', {'history': history})
+    history = ChatMessage.objects.filter(
+        user=request.user
+    ).order_by("created_at", "id")
+
+    return render(
+        request,
+        "delivery/chat_page.html",
+        {"history": history}
+    )
 
 
 @login_required
