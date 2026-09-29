@@ -39,7 +39,8 @@ def get_shipment(user, tracking_number):
 
 def serialize_shipment(delivery):
     return {
-        "tracking_number": delivery.tracking_number,
+        # str() مهم: tracking_number بيرجع UUID object في الذاكرة بعد الإنشاء مباشرة
+        "tracking_number": str(delivery.tracking_number),
         "status": delivery.get_status_display(),
         "pickup_address": delivery.pickup_address,
         "dropoff_address": delivery.dropoff_address,
@@ -233,6 +234,8 @@ def create_delivery(user, pickup_address, dropoff_address, scheduled_date,
         vehicle_type=vehicle_type,
         notes=notes,
     )
+    # نفس قاعدة النظام: أول ظهور للشحنة بيتسجل في سجل الحالات
+    delivery.history.create(old_status=None, new_status="PENDING", changed_by=user)
     return serialize_shipment(delivery)
 
 
@@ -432,6 +435,7 @@ if GEMINI_API_KEY:
         config = types.GenerateContentConfig(
             system_instruction=(
                 "You are the Smart Delivery AI assistant. "
+                f"Today's date is {timezone.now():%Y-%m-%d (%A)}. "
                 "Answer in the user's language. "
                 "Use tools to retrieve real system data when needed. "
                 "Choose tools based on the user's role and question. "
