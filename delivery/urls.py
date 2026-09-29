@@ -13,5 +13,5 @@ urlpatterns = [
   path('dispatch/', views.dispatch_home, name='dispatch_home'),
   path('chat/', views.chat_page, name='chat_page'),
   path('api/chat/', views.chat_api, name='chat_api'),
-  
+ path('logout/', views.logout_view, name='logout'), 
 ]

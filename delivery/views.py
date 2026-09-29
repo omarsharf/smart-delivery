@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Delivery, Customer, Driver,StatusHistory, ChatMessage
 from .forms import DeliveryForm, RegisterForm
+from django.contrib.auth import logout
+
 def index(request):
     return render(request,'delivery/home.html')
 def login(request):
@@ -180,6 +182,9 @@ def customer_dashboard(request):
 
 
 
+def logout_view(request):
+    logout(request)
+    return render(request, 'delivery/logout.html')
 
 
 
