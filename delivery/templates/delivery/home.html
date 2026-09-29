@@ -1,5 +1,39 @@
 {% extends "delivery/base.html" %}
- {% block content %} 
- <a href="{% url 'request_shipment' %}">اطلب شحنة</a>
- {% endblock %}
 
+{% block content %}
+<div class="hero-section">
+    <h1 class="hero-title">شحنتك توصل.. وانت متابعها خطوة بخطوة</h1>
+    <p class="hero-sub">اطلب شحنتك، اسندها لأقرب سائق، وتابع حالتها لحظة بلحظة برقم التتبع</p>
+    
+    <div class="card" style="max-width: 500px; margin: 1.5rem auto;">
+        <form action="{% url 'track' %}" method="get" style="display: flex; gap: 0.5rem;">
+            <input type="text" name="number" placeholder="اكتب رقم التتبع — مثال: 8909efe6..." required>
+            <button type="submit" class="btn btn-yellow">تتبع 🔍</button>
+        </form>
+    </div>
+</div>
+
+<div class="steps-grid">
+    <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>اطلب شحنتك</h3>
+        <p class="hero-sub">حدد عنوان الاستلام والتسليم والميعاد المناسب</p>
+    </div>
+    <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>سائق يستلمها</h3>
+        <p class="hero-sub">فريق التوزيع يسند أقرب سائق متاح لشحنتك</p>
+    </div>
+    <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>تابعها لحظة بلحظة</h3>
+        <p class="hero-sub">برقم التتبع تعرف شحنتك فين وستوصل إمتى</p>
+    </div>
+</div>
+
+<div class="card" style="text-align: center; background: #fff;">
+    <h3>عندك شحنة عايز تبعتها؟</h3>
+    <p class="hero-sub" style="margin-bottom: 1rem;">اطليها في أقل من دقيقة</p>
+    <a href="{% url 'request_shipment' %}" class="btn btn-primary">+ اطلب شحنة جديدة</a>
+</div>
+{% endblock %}

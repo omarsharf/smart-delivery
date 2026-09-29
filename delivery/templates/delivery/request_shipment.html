@@ -1,10 +1,22 @@
 {% extends "delivery/base.html" %}
-{% block content %} 
-<h3> طلب شحنه جديده</h3>
-<h4> املا البيانات وهنحدد لك افضل سائق في الميعاد اللي تختاره</h4>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button>إرسال</button>
-</form>
+
+{% block name %}طلب شحنة جديدة — توصيل ذكي{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">طلب شحنة جديدة 📦</h1>
+    <p class="page-sub">أملا البيانات وهنحدد لك أفضل سائق في الميعاد اللي تختاره</p>
+</div>
+
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <div style="margin-top: 1.5rem; text-align: left;">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">إرسال الطلب 🚀</button>
+        </div>
+    </form>
+</div>
 {% endblock %}

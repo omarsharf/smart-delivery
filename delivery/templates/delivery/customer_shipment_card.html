@@ -1,43 +1,40 @@
-{% comment %}
-  كارت شحنة واحد — بيستخدم جوه customer_dashboard
-  للعرض فقط: العميل بيشوف حالته، تغيير الحالة مش من هنا أبداً.
-{% endcomment %}
-
-<article class="shipment-card">
-  <div class="shipment-card-head">
-    <div class="shipment-track-no">{{ delivery.tracking_number }}</div>
-    <span class="status-badge status-{{ delivery.status|lower }}">{{ delivery.get_status_display }}</span>
-  </div>
-
-  <div class="route-line">
-    <span class="dot"></span>
-    <span>{{ delivery.pickup_address }}</span>
-    <span class="dash"></span>
-    <span>{{ delivery.dropoff_address }}</span>
-    <span class="dot"></span>
-  </div>
-
-  <div class="shipment-meta">
-    <div>
-      <div class="shipment-meta-label">الميعاد</div>
-      <div>{{ delivery.scheduled_date|date:"Y-m-d h:i A" }}</div>
+<article class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+  <div>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 0.8rem;">
+      <span style="font-weight: bold; color: #0284c7; font-size: 0.95rem;">#{{ delivery.tracking_number|slice:":12" }}</span>
+      <span class="badge badge-{{ delivery.status|lower }}">{{ delivery.get_status_display }}</span>
     </div>
-    <div>
-      <div class="shipment-meta-label">المركبة</div>
-      <div>{{ delivery.get_vehicle_type_display|default:"—" }}</div>
-    </div>
-  </div>
 
-  {% if delivery.driver %}
-    <div class="shipment-meta">
-      <div>
-        <div class="shipment-meta-label">السائق</div>
-        <div>{{ delivery.driver.name }}</div>
+    <div style="font-size: 0.9rem; background: #f8fafc; padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 0.8rem;">
+      <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem;">
+        <span>📍</span>
+        <span style="color: var(--text-main);">{{ delivery.pickup_address }}</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.4rem;">
+        <span>🎯</span>
+        <span style="color: var(--text-main);">{{ delivery.dropoff_address }}</span>
       </div>
     </div>
-  {% endif %}
 
-  <div class="btn-row">
-    <a href="{% url 'track' %}?number={{ delivery.tracking_number }}" class="btn btn-secondary btn-sm">شاهد التتبع</a>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.825rem; color: var(--text-muted); margin-bottom: 0.8rem;">
+      <div>
+        <strong>📅 الميعاد:</strong><br>
+        {{ delivery.scheduled_date|date:"Y-m-d h:i A" }}
+      </div>
+      <div>
+        <strong>🚗 المركبة:</strong><br>
+        {{ delivery.get_vehicle_type_display|default:"—" }}
+      </div>
+    </div>
+
+    {% if delivery.driver %}
+      <div style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
+        <strong>🚚 السائق:</strong> {{ delivery.driver.name }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+    <a href="{% url 'track' %}?number={{ delivery.tracking_number }}" class="btn btn-yellow" style="width: 100%; padding: 0.5rem; font-size: 0.85rem;">شاهد التتبع 🔍</a>
   </div>
 </article>

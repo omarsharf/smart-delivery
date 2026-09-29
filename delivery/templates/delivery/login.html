@@ -1,10 +1,23 @@
 {% extends "delivery/base.html" %}
- {% block content %} 
-<h3>تسجيل الدخول</h3>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button>دخول ➤</button>
-<p>مستخدم جديد؟ <a href="{% url 'register' %}">أنشئ حساب</a></p></form>
- {% endblock %}
 
+{% block content %}
+<div class="card" style="max-width: 420px; margin: 3rem auto;">
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span style="font-size: 2.5rem;">🚚</span>
+        <h2 style="margin-top: 0.5rem;">أهلاً بعودتك</h2>
+        <p class="hero-sub">سجل دخولك واكمل من حيث وقفت</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">دخول ➤</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+        <p>مستخدم جديد؟ <a href="{% url 'register' %}" style="color: #0284c7; font-weight: bold;">أنشئ حساب جديد</a></p>
+    </div>
+</div>
+{% endblock %}

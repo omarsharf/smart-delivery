@@ -1,11 +1,25 @@
 {% extends "delivery/base.html" %}
 
+{% block name %}إنشاء حساب — توصيل ذكي{% endblock %}
+
 {% block content %}
-<h3>إنشاء حساب جديد</h3>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button>إنشاء الحساب</button>
-</form>
-<p>عندك حساب بالفعل؟ <a href="{% url 'login' %}">سجل دخول من هنا</a></p>
+<div class="card" style="max-width: 480px; margin: 3rem auto;">
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span style="font-size: 2.5rem;">📝</span>
+        <h2 style="margin-top: 0.5rem;">إنشاء حساب جديد</h2>
+        <p class="hero-sub">انضم إلينا وابدأ في إدارة واطلب شحناتك بسهولة</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">إنشاء الحساب ➤</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+        <p>عندك حساب بالفعل؟ <a href="{% url 'login' %}" style="color: #0284c7; font-weight: bold;">سجل دخول من هنا</a></p>
+    </div>
+</div>
 {% endblock %}

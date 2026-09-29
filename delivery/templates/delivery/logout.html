@@ -1,30 +1,27 @@
-{% extends 'delivery/base.html' %}
-{% load static %}
+{% extends "delivery/base.html" %}
 
-{% block title %}تسجيل الخروج — أوردري{% endblock %}
+{% block name %}تسجيل الخروج — توصيل ذكي{% endblock %}
 
 {% block content %}
-<div class="glass pad" style="max-width: 440px; margin: 5rem auto; text-align: center; border-radius: 16px;">
-    
-    <div style="font-size: 2.8rem; margin-bottom: 0.8rem; display: inline-block; background: rgba(255, 255, 255, 0.05); padding: 0.8rem; border-radius: 50%;">
+<div class="card" style="max-width: 440px; margin: 4rem auto; text-align: center; padding: 2.5rem 1.5rem;">
+    <div style="font-size: 3rem; margin-bottom: 1rem; display: inline-block; background: #f8fafc; width: 80px; height: 80px; line-height: 80px; border-radius: 50%;">
         👋
     </div>
 
-    <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 600;">نشوفك على خير قريب!</h2>
+    <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: bold;">نشوفك على خير قريب!</h2>
     
-    <p class="muted" style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem;">
-        تم تسجيل خروجك بنجاح من حسابك في <strong>أوردري</strong>.<br>
+    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem;">
+        تم تسجيل خروجك بنجاح من حسابك في <strong>توصيل ذكي</strong>.<br>
         شكراً لوقتك معنا، وتقدر ترجع في أي وقت.
     </p>
 
     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-        <a href="{% url 'login' %}" class="btn" style="text-align: center; justify-content: center;">
+        <a href="{% url 'login' %}" class="btn btn-primary" style="width: 100%;">
             تسجيل الدخول مرة ثانية
         </a>
-        <a href="{% url 'home' %}" class="btn btn-ghost" style="text-align: center; justify-content: center; background: transparent; border: 1px solid var(--line);">
+        <a href="{% url 'home' %}" class="btn" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-main); width: 100%;">
             الرجوع للصفحة الرئيسية
         </a>
     </div>
-
 </div>
 {% endblock %}

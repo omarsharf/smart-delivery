@@ -1,52 +1,55 @@
 {% extends "delivery/base.html" %}
+
 {% block content %}
-<h3>شاشة السائق 🚚</h3>
-<p>أهلاً {{ request.user.driver.name }} — دي شحناتك النشطة:</p>
+<div class="page-header">
+    <h1 class="page-title">شحاتي النهاردة</h1>
+    <p class="page-sub">الشحنات المستندة ليك — حدّث حالتها كل ما تتحرك</p>
+</div>
 
-{% if deliveries %}
-  {% for d in deliveries %}
-    <div class="driver-card">
-      <h4>شحنة {{ d.tracking_number|slice:":8" }}</h4>
-      <p>الحالة: {{ d.get_status_display }}</p>
-      <p>العميل: {{ d.customer.name }} — 📞 {{ d.customer.phone }}</p>
-      <p>من: {{ d.pickup_address }}</p>
-      <p>إلى: {{ d.dropoff_address }}</p>
-      <p>الميعاد: {{ d.scheduled_date|date:"Y-m-d h:i A" }}</p>
-
-      {% if d.status == 'ASSIGNED' %}
-        <form method="post">
-          {% csrf_token %}
-          <input type="hidden" name="delivery_id" value="{{ d.id }}">
-          <input type="hidden" name="new_status" value="IN_TRANSIT">
-          <button>🚚 ابدأ الرحلة</button>
-        </form>
-
-      {% elif d.status == 'IN_TRANSIT' %}
-        <form method="post">
-          {% csrf_token %}
-          <input type="hidden" name="delivery_id" value="{{ d.id }}">
-          <input type="hidden" name="new_status" value="DELIVERED">
-          <button>✅ تم التسليم</button>
-        </form>
-        <form method="post">
-          {% csrf_token %}
-          <input type="hidden" name="delivery_id" value="{{ d.id }}">
-          <input type="hidden" name="new_status" value="DELAYED">
-          <button>⏰ اتأخرت</button>
-        </form>
-
-      {% elif d.status == 'DELAYED' %}
-        <form method="post">
-          {% csrf_token %}
-          <input type="hidden" name="delivery_id" value="{{ d.id }}">
-          <input type="hidden" name="new_status" value="DELIVERED">
-          <button>✅ تم التسليم</button>
-        </form>
-      {% endif %}
+{% for d in deliveries %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3>شحنة <span style="color: #0284c7;">{{ d.tracking_number|slice:":8" }}</span></h3>
+        <span class="badge badge-{{ d.status|lower }}">{{ d.get_status_display }}</span>
     </div>
-    <br>
-  {% endfor %}
-{% else %}
-  <p>مفيش شحنات مسندة لك دلوقتي ✅</p>
-{% endif %}
+    
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+        العميل: {{ d.customer.name }} · من {{ d.pickup_address }} إلى {{ d.dropoff_address }}
+    </p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; font-size: 0.9rem;">
+        <div><strong>الميعاد المخطط:</strong><br>{{ d.scheduled_date|date:"d سبتمبر — h:i" }}</div>
+        <div><strong>العنوان:</strong><br>{{ d.dropoff_address }}</div>
+        <div><strong>التليفون:</strong><br>{{ d.customer.phone }}</div>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        {% if d.status == 'ASSIGNED' %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="delivery_id" value="{{ d.id }}">
+                <input type="hidden" name="new_status" value="IN_TRANSIT">
+                <button class="btn btn-primary">ابدأ الرحلة (In Transit)</button>
+            </form>
+        {% elif d.status == 'IN_TRANSIT' %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="delivery_id" value="{{ d.id }}">
+                <input type="hidden" name="new_status" value="DELIVERED">
+                <button class="btn btn-success">✓ تم التسليم (Delivered)</button>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="delivery_id" value="{{ d.id }}">
+                <input type="hidden" name="new_status" value="DELAYED">
+                <button class="btn btn-danger">⚠ اتأخرت (Delayed)</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% empty %}
+<div class="card" style="text-align: center;">
+    <p>مفيش شحنات مسندة لك دلوقتي ✅</p>
+</div>
+{% endfor %}
 {% endblock %}

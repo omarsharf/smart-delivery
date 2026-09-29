@@ -1,54 +1,58 @@
 {% extends "delivery/base.html" %}
-{% block title %}شحناتي — توصيل ذكي{% endblock %}
+
+{% block name %}شحناتي — توصيل ذكي{% endblock %}
+
 {% block content %}
-<section>
-  <div class="container">
-    <div class="dashboard-head">
-      <div>
-        <h1 class="mt-0">شحناتي 📦</h1>
-      </div>
-      <a href="{% url 'request_shipment' %}" class="btn btn-primary">➕ اطلب شحنة جديدة</a>
-    </div>
-    <p class="dashboard-sub">كل اللي بعتّه عبر توصيل ذكي، في مكان واحد وبحالة لحظية.</p>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value">{{ total_count }}</div>
-        <div class="stat-label">إجمالي الشحنات</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">{{ active_count }}</div>
-        <div class="stat-label">قيد التنفيذ</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">{{ delivered_count }}</div>
-        <div class="stat-label">تم تسليمها</div>
-      </div>
-    </div>
-
-    <div class="filter-row">
-      <a href="{% url 'customer_dashboard' %}" class="filter-chip {% if not status_filter %}is-active{% endif %}">الكل</a>
-      <a href="{% url 'customer_dashboard' %}?status=PENDING" class="filter-chip {% if status_filter == 'PENDING' %}is-active{% endif %}">معلّقة</a>
-      <a href="{% url 'customer_dashboard' %}?status=ASSIGNED" class="filter-chip {% if status_filter == 'ASSIGNED' %}is-active{% endif %}">مُسندة</a>
-      <a href="{% url 'customer_dashboard' %}?status=IN_TRANSIT" class="filter-chip {% if status_filter == 'IN_TRANSIT' %}is-active{% endif %}">في الطريق</a>
-      <a href="{% url 'customer_dashboard' %}?status=DELAYED" class="filter-chip {% if status_filter == 'DELAYED' %}is-active{% endif %}">متأخرة</a>
-      <a href="{% url 'customer_dashboard' %}?status=DELIVERED" class="filter-chip {% if status_filter == 'DELIVERED' %}is-active{% endif %}">تم التسليم</a>
-      <a href="{% url 'customer_dashboard' %}?status=CANCELLED" class="filter-chip {% if status_filter == 'CANCELLED' %}is-active{% endif %}">ملغاة</a>
-    </div>
-
-    {% if deliveries %}
-      <div class="shipment-grid">
-        {% for delivery in deliveries %}
-          {% include "delivery/customer_shipment_card.html" with delivery=delivery %}
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="empty-state">
-        <h3>لسه مفيش شحنات</h3>
-        <p>أول شحنة هتبعتها هتظهر هنا بحالتها اللحظية.</p>
-        <a href="{% url 'request_shipment' %}" class="btn btn-primary" style="margin-top:12px;">ابعت أول شحنة</a>
-      </div>
-    {% endif %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 class="page-title">شحناتي 📦</h1>
+    <p class="page-sub">كل الشحنات التي قمت بطلبها، متتبعة بحالتها اللحظية</p>
   </div>
-</section>
+  <a href="{% url 'request_shipment' %}" class="btn btn-yellow">➕ اطلب شحنة جديدة</a>
+</div>
+
+<!-- إحصائيات الشحنات -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+  <div class="card" style="text-align: center; padding: 1.2rem;">
+    <div style="font-size: 1.8rem; font-weight: bold; color: var(--text-main);">{{ total_count }}</div>
+    <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.2rem;">إجمالي الشحنات</div>
+  </div>
+  <div class="card" style="text-align: center; padding: 1.2rem;">
+    <div style="font-size: 1.8rem; font-weight: bold; color: #0284c7;">{{ active_count }}</div>
+    <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.2rem;">قيد التنفيذ</div>
+  </div>
+  <div class="card" style="text-align: center; padding: 1.2rem;">
+    <div style="font-size: 1.8rem; font-weight: bold; color: #10b981;">{{ delivered_count }}</div>
+    <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.2rem;">تم تسليمها</div>
+  </div>
+</div>
+
+<!-- فلتر الحالات -->
+<div class="card" style="padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
+  <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.2rem;">
+    <a href="{% url 'customer_dashboard' %}" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; {% if not status_filter %}background: var(--nav-bg); color: #fff;{% else %}background: #f1f5f9; color: var(--text-main);{% endif %}">الكل</a>
+    <a href="{% url 'customer_dashboard' %}?status=PENDING" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; {% if status_filter == 'PENDING' %}background: var(--nav-bg); color: #fff;{% else %}background: #f1f5f9; color: var(--text-main);{% endif %}">معلّقة</a>
+    <a href="{% url 'customer_dashboard' %}?status=ASSIGNED" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; {% if status_filter == 'ASSIGNED' %}background: var(--nav-bg); color: #fff;{% else %}background: #f1f5f9; color: var(--text-main);{% endif %}">مُسندة</a>
+    <a href="{% url 'customer_dashboard' %}?status=IN_TRANSIT" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; {% if status_filter == 'IN_TRANSIT' %}background: var(--nav-bg); color: #fff;{% else %}background: #f1f5f9; color: var(--text-main);{% endif %}">في الطريق</a>
+    <a href="{% url 'customer_dashboard' %}?status=DELAYED" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; {% if status_filter == 'DELAYED' %}background: var(--nav-bg); color: #fff;{% else %}background: #f1f5f9; color: var(--text-main);{% endif %}">متأخرة</a>
+    <a href="{% url 'customer_dashboard' %}?status=DELIVERED" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; {% if status_filter == 'DELIVERED' %}background: var(--nav-bg); color: #fff;{% else %}background: #f1f5f9; color: var(--text-main);{% endif %}">تم التسليم</a>
+    <a href="{% url 'customer_dashboard' %}?status=CANCELLED" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; {% if status_filter == 'CANCELLED' %}background: var(--nav-bg); color: #fff;{% else %}background: #f1f5f9; color: var(--text-main);{% endif %}">ملغاة</a>
+  </div>
+</div>
+
+<!-- شبكة الشحنات -->
+{% if deliveries %}
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem;">
+    {% for delivery in deliveries %}
+      {% include "delivery/customer_shipment_card.html" with delivery=delivery %}
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card" style="text-align: center; padding: 3rem 1rem;">
+    <span style="font-size: 3rem;">📦</span>
+    <h3 style="margin-top: 0.5rem;">لسه مفيش شحنات</h3>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem;">أول شحنة هتبعتها هتظهر هنا بحالتها اللحظية.</p>
+    <a href="{% url 'request_shipment' %}" class="btn btn-primary" style="margin-top: 1rem;">ابعت أول شحنة</a>
+  </div>
+{% endif %}
 {% endblock %}

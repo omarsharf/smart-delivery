@@ -1,45 +1,73 @@
 {% extends "delivery/base.html" %}
 
-{% block content %}
-<h3>تتبع شحنتك</h3>
-<p>اكتب رقم التتبع اللي وصلك وقت الطلب</p>
+{% block name %}تتبع الشحنة — توصيل ذكي{% endblock %}
 
-<form method="get">
-    <input type="text" name="number" placeholder="رقم التتبع">
-    <button>تتبع </button>
-</form>
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">تتبع شحنتك 🔍</h1>
+    <p class="page-sub">اكتب رقم التتبع اللي وصلك وقت الطلب لمتابعة حالة الشحنة لحظة بلحظة</p>
+</div>
+
+<div class="card" style="max-width: 600px; margin: 0 auto 2rem auto;">
+    <form method="get" style="display: flex; gap: 0.5rem;">
+        <input type="text" name="number" placeholder="رقم التتبع (مثال: 8909efe6...)" value="{{ request.GET.number }}" required class="form-control">
+        <button type="submit" class="btn btn-yellow">تتبع</button>
+    </form>
+</div>
 
 {% if delivery %}
-    <h4>الشحنة رقم {{ delivery.tracking_number }}</h4>
-    <p><b>الحالة:</b> {{ delivery.get_status_display }}</p>
-    <p><b>العميل:</b> {{ delivery.customer.name }}</p>
-    <p><b>من:</b> {{ delivery.pickup_address }} — <b>إلى:</b> {{ delivery.dropoff_address }}</p>
-    <p><b>الميعاد المخطط:</b> {{ delivery.scheduled_date }}</p>
-    {% if delivery.driver %}
-        <p><b>السائق:</b> {{ delivery.driver.name }}</p>
-    {% else %}
-        <p><b>السائق:</b> لسه مفيش سائق مسند للشحنة</p>
-    {% endif %}
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+        <div>
+            <h3 style="margin-bottom: 0.2rem;">الشحنة رقم <span style="color: #0284c7;">{{ delivery.tracking_number }}</span></h3>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">العميل: {{ delivery.customer.name }}</span>
+        </div>
+        <span class="badge badge-{{ delivery.status|lower }}">{{ delivery.get_status_display }}</span>
+    </div>
 
-    <h4>خط سير الشحنة</h4>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; background: #f8fafc; padding: 1rem; border-radius: var(--radius-md);">
+        <div>
+            <strong>📍 من:</strong>
+            <p style="margin-top: 0.2rem;">{{ delivery.pickup_address }}</p>
+        </div>
+        <div>
+            <strong>🎯 إلى:</strong>
+            <p style="margin-top: 0.2rem;">{{ delivery.dropoff_address }}</p>
+        </div>
+        <div>
+            <strong>📅 الميعاد المخطط:</strong>
+            <p style="margin-top: 0.2rem;">{{ delivery.scheduled_date|date:"Y-m-d h:i A" }}</p>
+        </div>
+        <div>
+            <strong>🚚 السائق:</strong>
+            <p style="margin-top: 0.2rem;">{% if delivery.driver %}{{ delivery.driver.name }}{% else %}<span style="color: var(--text-muted);">لم يُسند بعد</span>{% endif %}</p>
+        </div>
+    </div>
+
+    <h4 style="margin-bottom: 1rem; color: var(--text-main);">خط سير الشحنة</h4>
     {% if delivery.history.all %}
-        <ul>
+        <div class="timeline">
             {% for h in delivery.history.all %}
-                <li>
-                    {% if h.old_status %}
-                        {{ h.old_status }} ← {{ h.new_status }}
-                    {% else %}
-                         ({{ h.new_status }})
-                    {% endif %}
-                     {{ h.changed_at }}
-                    {% if h.changed_by %}
-                         {{ h.changed_by.username }}
-                    {% endif %}
-                </li>
+                <div class="timeline-item">
+                    <div style="font-weight: bold; font-size: 0.95rem;">
+                        {% if h.old_status %}
+                            {{ h.old_status }} ← {{ h.new_status }}
+                        {% else %}
+                            تحديث إلى: {{ h.new_status }}
+                        {% endif %}
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
+                        🕒 {{ h.changed_at|date:"Y-m-d h:i A" }}
+                        {% if h.changed_by %}
+                            • بواسطة: {{ h.changed_by.username }}
+                        {% endif %}
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     {% else %}
-        <p>لسه مفيش تغييرات حالة مسجلة على الشحنة دي</p>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">لسه مفيش تغييرات حالة مسجلة على الشحنة دي.</p>
     {% endif %}
+</div>
 {% endif %}
 {% endblock %}
