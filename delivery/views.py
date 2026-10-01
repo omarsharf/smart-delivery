@@ -105,29 +105,7 @@ def driver_home(request):
     return render(request, 'delivery/driver_home.html', {'deliveries': deliveries})
 
 
-
-
 logger = logging.getLogger(__name__)
-
-
-def make_reply(message, user):
-    """الوضع المحلي: ردود ذكية من قاعدة البيانات بدون AI خارجي (لما مفيش مفتاح في .env)."""
-    message = message.strip()
-    # لو فيه رقم شحنة كامل في الرسالة → نرد بحالتها الحقيقية من الداتابيز
-    for word in message.split():
-        if len(word) == 36 and word.count('-') == 4:
-            delivery = Delivery.objects.filter(tracking_number=word).first()
-            if delivery and delivery.customer.user == user:
-                return f'شحنتك ({word[:8]}) حالتها الآن: {delivery.get_status_display()} — الميعاد: {delivery.scheduled_date:%Y-%m-%d %H:%M}'
-            return 'الرقم ده مش موجود أو مش تابع لحسابك.'
-    if 'شحن' in message or 'طلب' in message:
-        return 'تقدر تطلب شحنة جديدة من صفحة "اطلب شحنة" في القايمة فوق 🚚'
-    if 'سعر' in message or 'تكلفة' in message:
-        return 'التسعير حسب نوع المركبة: موتوسيكل للخفيف، مركبة للمتوسط، ومركبة كبيرة للحجم الكبير.'
-    if 'سلام' in message or 'أهلا' in message or 'اهلا' in message:
-        return 'أهلاً بيك! أنا المساعد الذكي لتوصيل ذكي 🤖 ابعت رقم شحنة كامل (زي 29ea6f72-...) وأنا أقولك حالتها.'
-    return 'لسه بتعلم 😅 — ابعت رقم شحنة كامل وأنا أقولك حالتها فوراً.'
-
 
 @login_required
 @require_POST
@@ -164,11 +142,11 @@ def chat_api(request):
         reply = run_agent(request.user, messages)
     except Exception:
         logger.exception("AI agent error")
-        reply = None
-
-    # لو مفيش مفتاح AI (run_agent رجع None) أو حصل خطأ → الوضع المحلي
-    if not reply:
-        reply = make_reply(user_message, request.user)
+        saved.delete()
+        return JsonResponse(
+            {"reply": "حصل خطأ أثناء الاتصال بالمساعد."},
+            status=502
+        )
 
     ChatMessage.objects.create(
         user=request.user,
@@ -177,7 +155,6 @@ def chat_api(request):
     )
 
     return JsonResponse({"reply": reply})
-
 
 @login_required
 def chat_page(request):
@@ -190,6 +167,7 @@ def chat_page(request):
         "delivery/chat_page.html",
         {"history": history}
     )
+
 
 
 @login_required

@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'smart_delivery_db', 
         'USER': 'postgres',          
-        'PASSWORD': '123000', 
+        'PASSWORD': 'gixch923!##O', 
         'HOST': '127.0.0.1',  
         'PORT': '5432',
     }
@@ -141,4 +141,4 @@ LOGIN_URL = '/login/'
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
